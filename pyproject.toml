@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "django-generic-tasks"
-version = "0.3.0"
-description = ""
+version = "0.3.2"
+description = "Active Job for Django"
 authors = ["Jiayu Yi <yijiayu@gmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/yi-jiayu/django-generic-tasks"
 
 [tool.poetry.dependencies]
 python = "^3.9"
