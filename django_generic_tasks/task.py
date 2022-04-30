@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pydantic import BaseModel
 
 from .api import api
+from .utils import import_attribute
 
 
 def _fully_qualified_name(cls: type):
@@ -28,8 +29,17 @@ class TaskMeta(abc.ABCMeta):
 
             handler.__name__ = name
 
+            path = getattr(
+                settings,
+                "TASKS_API_AUTHENTICATION",
+                "django_generic_tasks.security.BasicAuth",
+            )
+            auth = import_attribute(path)
+            if inspect.isclass(auth):
+                auth = auth()
+
             # register HTTP handler
-            api.post(f"/{name}", url_name=name)(csrf_exempt(handler))
+            api.post(f"/{name}", url_name=name, auth=auth)(csrf_exempt(handler))
 
         return cls
 
