@@ -29,11 +29,13 @@ class TaskMeta(abc.ABCMeta):
 
             handler.__name__ = name
 
-            path = getattr(
-                settings,
-                "TASKS_API_AUTHENTICATION",
-                "django_generic_tasks.security.BasicAuth",
-            )
+            path = getattr(cls, "TASKS_API_AUTHENTICATION", None)
+            if path is None:
+                path = getattr(
+                    settings,
+                    "TASKS_API_AUTHENTICATION",
+                    "django_generic_tasks.security.BasicAuth",
+                )
             auth = import_attribute(path)
             if inspect.isclass(auth):
                 auth = auth()
