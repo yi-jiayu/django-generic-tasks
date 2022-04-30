@@ -1,6 +1,7 @@
 import threading
 from typing import Protocol
 
+from django.urls import reverse
 from google.cloud import tasks_v2
 
 from .task import Task
@@ -36,7 +37,7 @@ class CloudTasksBackend:
         task = {
             "http_request": {
                 "http_method": tasks_v2.HttpMethod.POST,
-                "url": self.base_url + task.fully_qualified_name,
+                "url": self.base_url + reverse(f"tasks:{task.fully_qualified_name}"),
                 "oidc_token": {
                     "service_account_email": self.service_account,
                     "audience": self.audience,

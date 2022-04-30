@@ -7,7 +7,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from pydantic import BaseModel
 
-from .api import router
+from .api import api
 
 
 def _fully_qualified_name(cls: type):
@@ -15,13 +15,10 @@ def _fully_qualified_name(cls: type):
 
 
 class TaskMeta(abc.ABCMeta):
-    registry = {}
-
     def __new__(mcs, *args, **kwargs):
         cls = super().__new__(mcs, *args, **kwargs)
         if not inspect.isabstract(cls):
             name = _fully_qualified_name(cls)
-            mcs.registry[name] = cls
 
             (params_type,) = get_args(cls.__orig_bases__[0])
 
@@ -32,9 +29,7 @@ class TaskMeta(abc.ABCMeta):
             handler.__name__ = name
 
             # register HTTP handler
-            router.post(
-                f"/{name}", auth=getattr(settings, "TASKS_API_AUTHENTICATION", None)
-            )(csrf_exempt(handler))
+            api.post(f"/{name}", url_name=name)(csrf_exempt(handler))
 
         return cls
 

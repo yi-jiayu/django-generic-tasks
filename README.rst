@@ -34,15 +34,6 @@ endpoint and uses the specified Pydantic ``BaseModel`` for parameter verificatio
 Example configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
-Create your own ``NinjaAPI`` instance and mount ``django_generic_tasks.api.router``.
-
-`django_generic_tasks_example/api.py <django_generic_tasks_example/django_generic_tasks_example/api.py>`_
-
-.. include:: django_generic_tasks_example/django_generic_tasks_example/api.py
-  :code:
-
-Add your `NinjaAPI` instance in `urls.py`:
-
 `django_generic_tasks_example/urls.py <django_generic_tasks_example/django_generic_tasks_example/urls.py>`_
 
 .. include:: django_generic_tasks_example/django_generic_tasks_example/urls.py
@@ -68,14 +59,38 @@ Configuration
 ``TASKS_API_AUTHENTICATION``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Specifies what authentication should be required to run tasks via HTTP.
+Specifies the Python path to a function or class whose instances are callable to use to authenticate incoming task API calls. The function or callable class should accept a single parameter ``request`` representing the incoming request.
 
 Type: ``Optional[str]``
 
-Supported values:
+Examples:
 
-* ``"oidc"`` - Require API requests to contain a valid Google-issued OIDC token
-* ``None`` (default) - No authentication
+``my_app/authentication.py``
+
+::
+
+    # function
+    def authenticate(request):
+        """Only allow requests from localhost"""
+        return request.META["REMOTE_ADDR"] == "127.0.0.1"
+
+    # callable class instance
+    class Authenticator:
+        def __call__(self, request):
+            """Only allow requests from localhost"""
+            return request.META["REMOTE_ADDR"] == "127.0.0.1"
+
+``my_app/settings.py``
+
+::
+
+    TASKS_API_AUTHENTICATION = "my_app.authentication.authenticate"
+    # or
+    TASKS_API_AUTHENTICATION = "my_app.authentication.Authenticator"
+
+Built-in authentication methods:
+
+* ``django_generic_tasks.security.GoogleOIDCAuth`` - Enforces that incoming requests contain a Google-issued OIDC token in the authorization header. This can be automatically added to requests from Cloud Tasks and Cloud Scheduler.
 
 ``TASKS_BACKEND``
 ~~~~~~~~~~~~~~~~~
