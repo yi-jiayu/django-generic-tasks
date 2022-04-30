@@ -3,7 +3,7 @@ name = "django-generic-tasks"
 version = "0.3.2"
 description = "Active Job for Django"
 authors = ["Jiayu Yi <yijiayu@gmail.com>"]
-readme = "README.md"
+readme = "README.rst"
 homepage = "https://github.com/yi-jiayu/django-generic-tasks"
 
 [tool.poetry.dependencies]
