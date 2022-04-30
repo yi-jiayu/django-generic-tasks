@@ -1,8 +1,16 @@
 import cachecontrol
 import google.auth.transport.requests
 import requests
+from django.contrib.auth import authenticate
 from google.oauth2 import id_token
-from ninja.security import HttpBearer
+from ninja.security import HttpBasicAuth, HttpBearer
+
+NoAuth = None
+
+
+class BasicAuth(HttpBasicAuth):
+    def authenticate(self, request, username, password):
+        return authenticate(request, username=username, password=password)
 
 
 class GoogleOIDCAuth(HttpBearer):

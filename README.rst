@@ -63,6 +63,8 @@ Specifies the Python path to a function or class whose instances are callable to
 
 Type: ``Optional[str]``
 
+Default: ``django_generic_tasks.security.BasicAuth``
+
 Examples:
 
 ``my_app/authentication.py``
@@ -91,6 +93,8 @@ Examples:
 Built-in authentication methods:
 
 * ``django_generic_tasks.security.GoogleOIDCAuth`` - Enforces that incoming requests contain a Google-issued OIDC token in the authorization header. This can be automatically added to requests from Cloud Tasks and Cloud Scheduler.
+* ``django_generic_tasks.security.BasicAuth`` - Authenticates basic auth credentials using the Django authentication system
+* ``django_generic_tasks.security.NoAuth`` - No authentication, useful for development.
 
 ``TASKS_BACKEND``
 ~~~~~~~~~~~~~~~~~
